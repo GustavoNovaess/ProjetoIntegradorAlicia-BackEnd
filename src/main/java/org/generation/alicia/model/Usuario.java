@@ -50,6 +50,14 @@ public class Usuario {
 	@Size(min = 5, max = 500)
 	private String resumo;
 
+	// Link da Foto
+	
+	private String foto;
+	
+	// Tipo de usuário
+	
+	private String tipo;
+	
 	// Links para outras redes sociais:
 	
 	private String linkLinkedin;
@@ -57,7 +65,7 @@ public class Usuario {
 	private String linkInstagram;
 
 	private String linkFacebook;
-
+	
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties("usuario")
 	private List<Postagem> postagem;
@@ -118,6 +126,22 @@ public class Usuario {
 
 	public void setResumo(String resumo) {
 		this.resumo = resumo;
+	}
+	
+	public String getFoto() {
+		return foto;
+	}
+
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public String getLinkLinkedin() {

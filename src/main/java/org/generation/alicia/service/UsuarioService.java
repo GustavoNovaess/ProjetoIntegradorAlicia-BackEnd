@@ -23,40 +23,42 @@ public class UsuarioService {
 	
 	// Cadastro e Login
 	
-	public Optional<Usuario> CadastrarUsuario(Usuario usuario) {
+	public Optional<Usuario> CadastrarUsuario(Usuario login) {
 		
-		if(repository.findByLogin(usuario.getLogin()).isPresent()) { // Checa se o login(email) do usuario já esta cadastrado no banco
+		if(repository.findByLogin(login.getLogin()).isPresent()) { // Checa se o login(email) do usuario já esta cadastrado no banco
 			return null;
 		}
 		
-		int idade = Period.between(usuario.getDataNascimento(), LocalDate.now()).getYears();
+		int idade = Period.between(login.getDataNascimento(), LocalDate.now()).getYears();
 		
 		if(idade < 16) { // Checa se o usuário tem mais de 16 anos
 			return null;
 		}
 		
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder ();
-		String senhaEncoder = encoder.encode(usuario.getSenha());
-		usuario.setSenha(senhaEncoder);
+		String senhaEncoder = encoder.encode(login.getSenha());
+		login.setSenha(senhaEncoder);
 		
-		return Optional.of(repository.save(usuario));
+		return Optional.of(repository.save(login));
 	}
 	
 	public Optional<UsuarioLogin> Logar(Optional<UsuarioLogin> user){
 		
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		Optional<Usuario> usuario = repository.findByLogin(user.get().getLogin());
+		Optional<Usuario> login = repository.findByLogin(user.get().getLogin());
 		
-		if(usuario.isPresent()) {
-			if(encoder.matches(user.get().getSenha(), usuario.get().getSenha())) {
+		if(login.isPresent()) {
+			if(encoder.matches(user.get().getSenha(), login.get().getSenha())) {
 				
 				String auth = user.get().getLogin()+ ":" + user.get().getSenha();
 				byte[] encodeAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
 				String authHeader = "Basic " + new String(encodeAuth);
 				
 				user.get().setToken(authHeader);
-				user.get().setNome(usuario.get().getNome());
-				user.get().setSenha(usuario.get().getSenha());
+				user.get().setId(login.get().getId());
+				user.get().setNome(login.get().getNome());
+				user.get().setFoto(login.get().getFoto());
+				user.get().setTipo(login.get().getTipo());
 				
 				return user;
 			}
